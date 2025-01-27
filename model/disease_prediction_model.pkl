@@ -1,0 +1,24 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+import joblib
+
+# Load your dataset
+data = pd.read_csv('data/patient_symptoms.csv')
+
+# Data Preprocessing
+X = data[['age', 'gender', 'symptom1', 'symptom2', 'symptom3']]
+y = data['diagnosis']
+
+# One-hot encoding for categorical features (gender, symptoms)
+X = pd.get_dummies(X)
+
+# Split the dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the model
+model = RandomForestClassifier()
+model.fit(X_train, y_train)
+
+# Save the model
+joblib.dump(model, 'model/disease_prediction_model.pkl')

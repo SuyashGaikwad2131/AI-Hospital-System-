@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Hospital System</title>
+</head>
+<body>
+    <h1>AI Hospital System</h1>
+
+    <h2>Add Patient</h2>
+    <form onsubmit="addPatient(); return false;">
+        <input type="text" id="name" placeholder="Name" required><br>
+        <input type="number" id="age" placeholder="Age" required><br>
+        <label><input type="radio" name="gender" value="Male"> Male</label>
+        <label><input type="radio" name="gender" value="Female"> Female</label><br>
+        <input type="text" id="contact" placeholder="Contact Number" required><br>
+        <textarea id="address" placeholder="Address" required></textarea><br>
+        <textarea id="history" placeholder="Medical History"></textarea><br>
+        <button type="submit">Add Patient</button>
+    </form>
+
+    <h2>Predict Disease</h2>
+    <form onsubmit="predictDisease(); return false;">
+        <input type="number" id="age" placeholder="Age" required><br>
+        <label><input type="radio" name="gender" value="Male"> Male</label>
+        <label><input type="radio" name="gender" value="Female"> Female</label><br>
+        <label><input type="checkbox" id="symptom1"> Fatigue</label><br>
+        <label><input type="checkbox" id="symptom2"> Fever</label><br>
+        <label><input type="checkbox" id="symptom3"> Cough</label><br>
+        <button type="submit">Predict Disease</button>
+    </form>
+
+    <script>
+        async function addPatient() {
+            const patientData = {
+                name: document.getElementById('name').value,
+                age: document.getElementById('age').value,
+                gender: document.querySelector('input[name="gender"]:checked').value,
+                contact_no: document.getElementById('contact').value,
+                address: document.getElementById('address').value,
+                medical_history: document.getElementById('history').value
+            };
+            const response = await fetch('/add_patient', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(patientData)
+            });
+            const result = await response.json();
+            alert(result.message);
+        }
+
+        async function predictDisease() {
+            const patientData = {
+                age: document.getElementById('age').value,
+                gender_Male: document.querySelector('input[name="gender"]:checked').value === "Male" ? 1 : 0,
+                symptom1_fatigue: document.getElementById('symptom1').checked ? 1 : 0,
+                symptom2_fever: document.getElementById('symptom2').checked ? 1 : 0,
+                symptom3_cough: document.getElementById('symptom3').checked ? 1 : 0
+            };
+            const response = await fetch('/predict_disease', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(patientData)
+            });
+            const result = await response.json();
+            alert('Predicted Disease: ' + result.predicted_disease);
+        }
+    </script>
+</body>
+</html>
